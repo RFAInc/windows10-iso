@@ -26,7 +26,7 @@ function Get-Win10ISOLink {
     $prodID = "1429"
 
     # prefered architecture
-    if ($Architecture -eq "64bit"){ $archID = "IsoX64" } else { $archID = "IsoX86" }
+    if ($Architecture -eq "64bit"){ $archID = "X64" } else { $archID = "X86" }
 
     # variables you might not want to change (unless msft changes their schema)
     $pgeIDs = @("a8f8f489-4c7f-463a-9ca6-5cff94d8d041", "cfa9e580-a81e-4a4b-a846-7b21bf4e2e5b")
@@ -71,14 +71,11 @@ function Get-Win10ISOLink {
     $response = Invoke-WebRequest -UserAgent $userAgent -WebSession $session $uri
 
     # parses response data 
-    $raw = ($response.AllElements | Where-Object {$_.tagname -eq "input"}).value
-    $json = $raw.Replace(',"DownloadType": IsoX64',',"DownloadType": "IsoX64"')
-    $json = $json.Replace(',"DownloadType": IsoX86',',"DownloadType": "IsoX86"')
-    $objs = $json | ConvertFrom-Json
-    $objs | Foreach-Object {$_.Uri = ($_.Uri).Replace('amp;','')}
+    $raw = ($response.Links| Where-Object {$_.outerText -like "*Download"}).href
+    $clean = $raw.Replace('amp;','')
 
     # stores download link
-    $dlLink = $objs | Where-Object {$_.DownloadType -eq $archID} | Select-Object -ExpandProperty Uri
+    $dlLink = $clean | Where-Object {$_ -like "*$archID*"}
 
     # outputs download link
     Write-Output $dlLink
