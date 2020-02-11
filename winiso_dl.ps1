@@ -26,8 +26,8 @@ function Get-Win10ISOLink {
     $prodID = "1429"
 
     # prefered architecture
-    if ($Architecture -eq "64bit"){ $archID = "X64" } else { $archID = "X86" }
-
+    if ($Architecture -eq "64bit"){ $archID = "x64" } else { $archID = "x32" }
+    
     # variables you might not want to change (unless msft changes their schema)
     $pgeIDs = @("a8f8f489-4c7f-463a-9ca6-5cff94d8d041", "cfa9e580-a81e-4a4b-a846-7b21bf4e2e5b")
     $actIDs = @("getskuinformationbyproductedition", "getproductdownloadlinksbysku")
