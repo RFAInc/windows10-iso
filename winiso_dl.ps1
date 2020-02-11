@@ -22,8 +22,8 @@ function Get-Win10ISOLink {
     $lang = "English"
     $locID = "en-US"
     $verID = "Windows10ISO"
-    $skuID = "8829"
-    $prodID = "1384"
+    $skuID = "9029"
+    $prodID = "1429"
 
     # prefered architecture
     if ($Architecture -eq "64bit"){ $archID = "IsoX64" } else { $archID = "IsoX86" }
