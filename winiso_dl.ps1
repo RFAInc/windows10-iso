@@ -91,3 +91,16 @@ function Install-Win10FeatureUpdate {
     )
     Invoke-Expression "$((Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
 }
+
+function Download-Win10ISO {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)] 
+        [ValidateSet("64bit", "32bit")]
+        [String] $Architecture,
+        [Parameter(Mandatory=$false)] 
+        [String] $DLPath = (Get-Location).Path,
+    )
+    $DLLink = (new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows_10_iso_dl/master/winiso_dl.ps1')| Invoke-Expression; Get-Win10ISOLink -Architecture $Architecture
+    (new-object System.Net.WebClient).DownloadFile("$DLLink", "$DLPath")
+}
