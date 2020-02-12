@@ -68,7 +68,7 @@ function Get-Win10ISOLink {
     $uri += "&sdvParam=" + $sdvParam
 
     # requests link data
-    $response = Invoke-WebRequest -UserAgent $userAgent -WebSession $session $uri
+    $response = Invoke-WebRequest -UserAgent $userAgent -WebSession $session -Uri $uri -UseBasicParsing
 
     # parses response data 
     $raw = ($response.Links).href
