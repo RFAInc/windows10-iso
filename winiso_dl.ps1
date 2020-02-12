@@ -102,5 +102,5 @@ function Download-Win10ISO {
         [String] $DLPath = (Get-Location).Path
     )
     $DLLink = Get-Win10ISOLink -Architecture $Architecture
-    (New-Object System.Net.WebClient).DownloadFile($DLLink, $DLPath)
+    (New-Object System.Net.WebClient).DownloadFile("$DLLink", "$DLPath")
 }
