@@ -99,8 +99,9 @@ function Download-Win10ISO {
         [ValidateSet("64bit", "32bit")]
         [String] $Architecture,
         [Parameter(Mandatory=$false)] 
-        [String] $DLPath = (Get-Location).Path
+        [String] $DLPath = (Get-Location).Path + "\" +"Win10_" + $Architecture + ".iso"
     )
     $DLLink = Get-Win10ISOLink -Architecture $Architecture
-    (New-Object System.Net.WebClient).DownloadFile("$DLLink", "$DLPath")
+    Write-Output "ISO will be downloaded to " + $DLPath
+    (New-Object System.Net.WebClient).DownloadFile($DLLink, $DLPath)
 }
