@@ -71,7 +71,7 @@ function Get-Win10ISOLink {
     $response = Invoke-WebRequest -UserAgent $userAgent -WebSession $session $uri
 
     # parses response data 
-    $raw = ($response.Links| Where-Object {$_.outerText -like "*Download"}).href
+    $raw = ($response.Links).href
     $clean = $raw.Replace('amp;','')
 
     # stores download link
