@@ -53,7 +53,7 @@ function Get-Win10ISOLink {
     $uri += "&sdvParam=" + $sdvParam
 
     # requests user session
-    $null = Invoke-WebRequest -UserAgent $userAgent -WebSession $session $uri
+    $null = Invoke-WebRequest -UserAgent $userAgent -WebSession $session -Uri $uri -UseBasicParsing
 
     # builds link request url
     $uri = "https://www.microsoft.com/" + $locID + "/api/controls/contentinclude/html"
