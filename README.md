@@ -7,7 +7,7 @@ Download-Win10ISO:
 This function generates a new ISO link and downloads it to your PC
 
 Install-Win10FeatureUpdate:
-This function mounts a win 10 ISO and attempts to upgrade the OS to the version of the specified ISO. 
+This function mounts a windows 10 ISO and attempts to upgrade the OS to the version of said ISO. 
 
 Example uses of the functions in this repo:
 
