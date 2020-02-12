@@ -80,3 +80,14 @@ function Get-Win10ISOLink {
     # outputs download link
     Write-Output $dlLink
 }
+
+function Install-Win10FeatureUpdate {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)] 
+        [String] $ISOPath,
+        [Parameter(Mandatory=$true)] 
+        [String] $LogPath
+    )
+    Invoke-Expression "$((Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
+}
