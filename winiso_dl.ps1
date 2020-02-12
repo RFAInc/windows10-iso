@@ -81,17 +81,6 @@ function Get-Win10ISOLink {
     Write-Output $dlLink
 }
 
-function Install-Win10FeatureUpdate {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)] 
-        [String] $ISOPath,
-        [Parameter(Mandatory=$true)] 
-        [String] $LogPath
-    )
-    Invoke-Expression "$((Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
-}
-
 function Download-Win10ISO {
     [CmdletBinding()]
     param (
@@ -102,6 +91,17 @@ function Download-Win10ISO {
         [String] $DLPath = (Get-Location).Path + "\" +"Win10_" + $Architecture + ".iso"
     )
     $DLLink = Get-Win10ISOLink -Architecture $Architecture
-    Write-Output "ISO will be downloaded to " + $DLPath
+    Write-Output "ISO will be downloaded to $DLPath"
     (New-Object System.Net.WebClient).DownloadFile($DLLink, $DLPath)
+}
+
+function Install-Win10FeatureUpdate {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)] 
+        [String] $ISOPath,
+        [Parameter(Mandatory=$true)] 
+        [String] $LogPath
+    )
+    Invoke-Expression "$((Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
 }
