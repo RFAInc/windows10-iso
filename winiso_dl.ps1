@@ -102,6 +102,6 @@ function Download-Win10ISO {
         [String] $DLPath = (Get-Location).Path
     )
     $DLLink = (new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows_10_iso_dl/master/winiso_dl.ps1')| Invoke-Expression; Get-Win10ISOLink -Architecture $Architecture
-    (new-object System.Net.WebClient).DownloadFile("$DLLink", "$DLPath")
+    (new-object System.Net.WebClient).DownloadFile("$DLLink", $DLPath)
     Write-Output "Download will be placed in " + $DLPath
 }
