@@ -91,7 +91,7 @@ function Download-Win10ISO {
         [String] $DLPath = (Get-Location).Path + "\" +"Win10_" + $Architecture + ".iso"
     )
     $DLLink = Get-Win10ISOLink -Architecture $Architecture
-    Write-Host "ISO will be downloaded to $DLPath"
+    Write-Host "The Windows 10 ISO will be downloaded to $DLPath"
     (New-Object System.Net.WebClient).DownloadFile($DLLink, $DLPath)
 }
 
@@ -103,6 +103,6 @@ function Install-Win10FeatureUpdate {
         [Parameter(Mandatory=$true)] 
         [String] $LogPath
     )
-    Write-Host "Upgrade will commence shortly. Your PC will be rebooted soon. Please save any work you do not want to lose."
+    Write-Host "The Upgrade will commence shortly. Your PC will be rebooted soon. Please save any work you do not want to lose."
     Invoke-Expression "$((Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
 }
