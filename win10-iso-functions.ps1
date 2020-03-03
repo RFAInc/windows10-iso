@@ -17,7 +17,7 @@ function Get-Win10ISOLink {
         [ValidateSet("64-bit", "32-bit")]
         [String] $Architecture = (Get-WmiObject Win32_OperatingSystem).OSArchitecture,
         [Parameter(Mandatory=$false)] 
-        [ValidateSet("en-US")] # TODO: complete validation set
+        [ValidateSet("fr-dz", "es-ar", "en-au", "nl-be", "fr-be", "es-bo", "bs-ba", "pt-br", "en-ca", "fr-ca", "cs-cz", "es-cl", "es-co", "es-cr", "sr-latn-me", "en-cy", "da-dk", "de-de", "es-ec", "et-ee", "en-eg", "es-sv", "es-es", "fr-fr", "es-gt", "en-gulf", "es-hn", "en-hk", "hr-hr", "en-in", "id-id", "en-ie", "is-is", "it-it", "en-jo", "lv-lv", "en-lb", "lt-lt", "hu-hu", "en-my", "en-mt", "es-mx", "fr-ma", "nl-nl", "en-nz", "es-ni", "en-ng", "nb-no", "de-at", "en-pk", "es-pa", "es-py", "es-pe", "en-ph", "pl-pl", "pt-pt", "es-pr", "es-do", "ro-md", "ro-ro", "en-sa", "de-ch", "en-sg", "sl-si", "sk-sk", "en-za", "sr-latn-rs", "en-lk", "fr-ch", "fi-fi", "sv-se", "fr-tn", "tr-tr", "en-gb", "en-us", "es-uy", "es-ve", "vi-vn", "el-gr", "ru-by", "bg-bg", "ru-kz", "ru-ru", "uk-ua", "he-il", "ar-iq", "ar-sa", "ar-ly", "ar-eg", "ar-gulf", "th-th", "ko-kr", "zh-cn", "zh-tw", "ja-jp", "zh-hk")]
         [String] $Locale = (Get-WinSystemLocale).Name,
         [Parameter(Mandatory=$false)]
         [ValidateSet("Arabic", "Brazilian Portuguese", "Bulgarian", "Chinese (Simplified)", "Chinese (Traditional)", "Croatian", "Czech", "Danish", "Dutch", "English", "English International", "Estonian", "Finnish", "French", "French Canadian", "German", "Greek", "Hebrew", "Hungarian", "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian Latin", "Slovak", "Slovenian", "Spanish", "Spanish (Mexico)", "Swedish", "Thai", "Turkish", "Ukrainian")]
@@ -33,7 +33,7 @@ function Get-Win10ISOLink {
     # prefered prodID
     if ($Version = "Latest") {
         # grabs latest id
-        $response = Invoke-WebRequest -UserAgent $userAgent -WebSession $session -Uri "https://www.microsoft.com/en-us/software-download/windows10ISO" -UseBasicParsing
+        $response = Invoke-WebRequest -UserAgent $userAgent -WebSession $session -Uri "https://www.microsoft.com/$Locale/software-download/windows10ISO" -UseBasicParsing
         $prodID = ([regex]::Match((($response).RawContent), 'product-info-content.*option value="(.*)">Windows 10')).captures.groups[1].value
     } else{
         # uses hard-coded id
@@ -110,9 +110,9 @@ function Download-Win10ISO {
     .SYNOPSIS
         This function leverages Get-Win10ISOLink to generate and download a windows 10 ISO using the default params.
     .INPUTS
-        Prefered Architecture 
+        Prefered Architecture and ISO download path
     .OUTPUTS
-        Windows 10 ISO download link    
+        Windows 10 ISO file    
     .NOTES
         Version:        1.0
         Author:         Andy Escolastico
@@ -120,6 +120,9 @@ function Download-Win10ISO {
     #>
     [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$false)] 
+        [ValidateSet("64-bit", "32-bit")]
+        [String] $Architecture = (Get-WmiObject Win32_OperatingSystem).OSArchitecture,
         [Parameter(Mandatory=$false)] 
         [String] $DLPath = (Get-Location).Path + "\" +"Win10_" + $Architecture + ".iso"
     )
@@ -133,7 +136,7 @@ function Install-Win10FeatureUpdate {
     .SYNOPSIS
         PLACEHOLDER
     .INPUTS
-        Prefered Architecture 
+        Win10 ISO path and install log path 
     .OUTPUTS
         Windows 10 ISO download link    
     .NOTES
