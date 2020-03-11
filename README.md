@@ -1,6 +1,6 @@
 # Windows 10 ISO Powershell Functions
 
-GET-Win10ISOLink:
+Get-Win10ISOLink:
 This function spoofs a request from a non windows device in order generate a windows 10 ISO link. It leverages MSFTs internal APIs and hardcoded IDs to generate the link.
 
 Download-Win10ISO:
