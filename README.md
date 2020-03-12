@@ -1,6 +1,6 @@
 # Windows 10 ISO Powershell Functions
 
-GET-Win10ISOLink:
+Get-Win10ISOLink:
 This function spoofs a request from a non windows device in order generate a windows 10 ISO link. It leverages MSFTs internal APIs and hardcoded IDs to generate the link.
 
 Download-Win10ISO:
@@ -15,36 +15,36 @@ Example uses of the functions in this repo:
 # GENERATE DL LINK:
 CMD:
 ```
-"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows_10_iso_dl/master/winiso_dl.ps1')| Invoke-Expression; Get-Win10ISOLink -Architecture 64bit}"
+"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Get-Win10ISOLink}"
 ```
 PowerShell:
 ```
-(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows_10_iso_dl/master/winiso_dl.ps1')| Invoke-Expression; Get-Win10ISOLink -Architecture 64bit
+(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Get-Win10ISOLink
 ```
 # DOWNLOAD ISO:
 CMD:
 ```
-"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows_10_iso_dl/master/winiso_dl.ps1')| Invoke-Expression; Download-Win10ISO -Architecture 64bit -DLPath 'C:\Temp\Windows10_x64.iso'}"
+"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Download-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'}"
 ```
 PowerShell:
 ```
-(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows_10_iso_dl/master/winiso_dl.ps1')| Invoke-Expression; Download-Win10ISO -Architecture 64bit -DLPath 'C:\Temp\Windows10_x64.iso'
+(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Download-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'
 ```
 # INSTALL ISO
 CMD:
 ```
-"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows_10_iso_dl/master/winiso_dl.ps1')| Invoke-Expression; Install-Win10FeatureUpdate -ISOPath 'C:\Temp\Windows10_x64.iso' -LogPath 'C:\Temp\WindowsUpgradeLogs'}"
+"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Install-Win10FeatureUpdate -ISOPath 'C:\Windows\Temp\Windows10.iso' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'}"
 ```
 Powershell:
 ```
-(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows_10_iso_dl/master/winiso_dl.ps1') | Invoke-Expression; Install-Win10FeatureUpdate -ISOPath 'C:\Temp\Windows10_x64.iso' -LogPath 'C:\Temp\WindowsUpgradeLogs'
+(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Install-Win10FeatureUpdate -ISOPath 'C:\Windows\Temp\Windows10.iso' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'
 ```
 # One step upgrade:
 CMD:
 ```
-"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows_10_iso_dl/master/winiso_dl.ps1') | Invoke-Expression; Download-Win10ISO -Architecture 64bit -DLPath 'C:\Temp\Windows10_x64.iso'; Install-Win10FeatureUpdate -ISOPath 'C:\Temp\Windows10_x64.iso' -LogPath 'C:\Temp\WindowsUpgradeLogs'}"
+"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Download-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'; Install-Win10FeatureUpdate -ISOPath 'C:\Windows\Temp\Windows10.iso' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'}"
 ```
 Powershell:
 ```
-(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows_10_iso_dl/master/winiso_dl.ps1') | Invoke-Expression; Download-Win10ISO -Architecture 64bit -DLPath 'C:\Temp\Windows10_x64.iso'; Install-Win10FeatureUpdate -ISOPath 'C:\Temp\Windows10_x64.iso' -LogPath 'C:\Temp\WindowsUpgradeLogs'
+(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/aescolastico/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Download-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'; Install-Win10FeatureUpdate -ISOPath 'C:\Windows\Temp\Windows10.iso' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'
 ```
