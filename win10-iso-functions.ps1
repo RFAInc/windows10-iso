@@ -128,7 +128,7 @@ function Download-Win10ISO {
     )
     $DLLink = Get-Win10ISOLink -Architecture $Architecture
     Write-Host "The Windows 10 ISO will be downloaded to $DLPath"
-    (New-Object System.Net.WebClient).DownloadFile($DLLink, $DLPath)
+    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$DLPath")
 }
 
 function Install-Win10FeatureUpdate {
@@ -137,8 +137,6 @@ function Install-Win10FeatureUpdate {
         PLACEHOLDER
     .INPUTS
         Win10 ISO path and install log path 
-    .OUTPUTS
-        Windows 10 ISO download link    
     .NOTES
         Version:        1.0
         Author:         Andy Escolastico
@@ -151,6 +149,31 @@ function Install-Win10FeatureUpdate {
         [Parameter(Mandatory=$true)] 
         [String] $LogPath
     )
-    Write-Host "The Upgrade will commence shortly. Your PC will be rebooted soon. Please save any work you do not want to lose."
+    Write-Host "The Upgrade will commence shortly. Your PC will be rebooted . Please save any work you do not want to lose."
     Invoke-Expression "$((Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
 }
+
+function Upgrade-Windows {
+    <#
+    .SYNOPSIS
+        This function downloads the Windows update assistant tool and runs it silently.
+    .NOTES
+        Version:        1.0
+        Author:         Andy Escolastico
+        Creation Date:  05/10/2020
+    #>
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$false)] 
+        [String] $DLPath = (Get-Location).Path,
+        [Parameter(Mandatory=$false)] 
+        [String] $LogPath = $DLPath
+    )
+    if(!(Test-Path -Path $DLPath)){$null = New-Item -ItemType directory -Path $DLPath}    
+    $DLLink = "https://go.microsoft.com/fwlink/?LinkID=799445"
+    $FileName = "Win10_UA.exe"
+    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$DLPath\$FileName")
+    Write-Host "The Upgrade will commence shortly. Your PC will be rebooted. Please save any work you do not want to lose."
+    Invoke-Expression "$DLPath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
+}
+
