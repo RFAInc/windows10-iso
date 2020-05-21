@@ -149,7 +149,7 @@ function Install-Win10FeatureUpdate {
         [Parameter(Mandatory=$true)] 
         [String] $LogPath
     )
-    Write-Host "The Upgrade will commence shortly. Your PC will be rebooted . Please save any work you do not want to lose."
+    Write-Host "The Upgrade will commence shortly. Your PC will be rebooted. Please save any work you do not want to lose."
     Invoke-Expression "$((Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
 }
 
