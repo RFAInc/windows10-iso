@@ -171,7 +171,7 @@ function Install-Win10FeatureUpdate {
 
 }
 
-function Update-Windows10FeatureUpgrade {
+function Start-Windows10Upgrade {
     <#
     .SYNOPSIS
         This function downloads the Windows update assistant tool and runs it silently.
@@ -195,5 +195,5 @@ function Update-Windows10FeatureUpgrade {
     Invoke-Expression "$DLPath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
 }
 # Alias to previously-created functoin using unapproved verb.
-New-Alias -Name "Upgrade-Windows" -Value "Update-Windows10FeatureUpgrade" -ea 0
+New-Alias -Name "Upgrade-Windows" -Value "Start-Windows10Upgrade" -ea 0
 
