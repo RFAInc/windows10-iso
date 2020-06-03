@@ -105,35 +105,7 @@ function Get-Win10ISOLink {
     Write-Output $dlLink
 }
 
-function Receive-Win10ISO {
-    <#
-    .SYNOPSIS
-        This function leverages Get-Win10ISOLink to generate and download a windows 10 ISO using the default params.
-    .INPUTS
-        Prefered Architecture and ISO download path
-    .OUTPUTS
-        Windows 10 ISO file    
-    .NOTES
-        Version:        1.0
-        Author:         Andy Escolastico
-        Creation Date:  02/11/2020
-    #>
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$false)] 
-        [ValidateSet("64-bit", "32-bit")]
-        [String] $Architecture = (Get-WmiObject Win32_OperatingSystem).OSArchitecture,
-        [Parameter(Mandatory=$false)] 
-        [String] $DLPath = (Get-Location).Path + "\" +"Win10_" + $Architecture + ".iso"
-    )
-    $DLLink = Get-Win10ISOLink -Architecture $Architecture
-    Write-Verbose "The Windows 10 ISO will be downloaded to $DLPath" -Verbose
-    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$DLPath")
-}
-# Alias to previously-created functoin using unapproved verb.
-New-Alias -Name "Download-Win10ISO" -Value "Receive-Win10ISO" -ea 0
-
-function Install-Win10FeatureUpdate {
+function Start-Win10FeatureUpdate {
     <#
     .SYNOPSIS
         Installs an upgrade to Windows given an existing ISO file.
@@ -145,15 +117,37 @@ function Install-Win10FeatureUpdate {
         Creation Date:  02/11/2020
         
         Version 1.0 (2020-02-11)
-        Version 1.1 (2020-06-03) - Added handling for case where drive letter was not mounted.
+        Version 1.1 (2020-06-03) - Added handling for case where drive letter was not mounted.                
+        Version 1.2 (2020-06-03) - Added ISO download functionality
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory=$true)] 
-        [String] $ISOPath,
-        [Parameter(Mandatory=$true)] 
-        [String] $LogPath
+        [Parameter(Mandatory=$false)] 
+        [ValidateSet("64-bit", "32-bit")]
+        [String] $Architecture = (Get-WmiObject Win32_OperatingSystem).OSArchitecture,
+        [Parameter(Mandatory=$false)] 
+        [String] [String] $DLPath = (Get-Location).Path + "\" +"Win10_" + $Architecture + ".iso",
+        [Parameter(Mandatory=$false)] 
+        [String] $LogPath = (Get-Location).Path 
     )
+
+    Write-Verbose "Attempting to generate a $Architecture windows 10 iso download link" -Verbose
+    try {
+        $DLLink = Get-Win10ISOLink -Architecture $Architecture
+    }
+    catch {
+        throw "Failed to generate windows 10 iso download link."
+    }
+    
+    Write-Verbose "Attempting to download windows 10 iso to '$DLPath'" -Verbose
+    try {
+        (New-Object System.Net.WebClient).DownloadFile($DLLink, "$DLPath")
+    }
+    catch {
+        throw "Failed to download ISO at path specified."
+    }
+    
+    $ISOPath = $DLPath
     
     if (Test-Path $ISOPath) {
         $DriveLetter = (Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter
@@ -171,7 +165,7 @@ function Install-Win10FeatureUpdate {
 
 }
 
-function Start-Windows10Upgrade {
+function Start-Win10Upgrade {
     <#
     .SYNOPSIS
         This function downloads the Windows update assistant tool and runs it silently.
@@ -194,6 +188,3 @@ function Start-Windows10Upgrade {
     Write-Host "The Upgrade will commence shortly. Your PC will be rebooted. Please save any work you do not want to lose."
     Invoke-Expression "$DLPath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
 }
-# Alias to previously-created functoin using unapproved verb.
-New-Alias -Name "Upgrade-Windows" -Value "Start-Windows10Upgrade" -ea 0
-
