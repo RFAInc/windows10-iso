@@ -105,7 +105,7 @@ function Get-Win10ISOLink {
     Write-Output $dlLink
 }
 
-function Download-Win10ISO {
+function Receive-Win10ISO {
     <#
     .SYNOPSIS
         This function leverages Get-Win10ISOLink to generate and download a windows 10 ISO using the default params.
@@ -128,7 +128,7 @@ function Download-Win10ISO {
     )
     $DLLink = Get-Win10ISOLink -Architecture $Architecture
     Write-Verbose "The Windows 10 ISO will be downloaded to $DLPath" -Verbose
-    (New-Object System.Net.WebClient).DownloadFile($DLLink, $DLPath)
+    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$DLPath")
 }
 
 function Install-Win10FeatureUpdate {
@@ -136,7 +136,7 @@ function Install-Win10FeatureUpdate {
     .SYNOPSIS
         Installs an upgrade to Windows given an existing ISO file.
     .INPUTS
-        Win10 ISO path and install log path   
+        Win10 ISO path and install log path
     .NOTES
         Version:        1.1
         Author:         Andy Escolastico
@@ -166,4 +166,30 @@ function Install-Win10FeatureUpdate {
     } else {
         throw "ISO could not be mounted on this system."
     }
+
 }
+
+function Update-Windows10FeatureUpgrade {
+    <#
+    .SYNOPSIS
+        This function downloads the Windows update assistant tool and runs it silently.
+    .NOTES
+        Version:        1.0
+        Author:         Andy Escolastico
+        Creation Date:  05/10/2020
+    #>
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$false)] 
+        [String] $DLPath = (Get-Location).Path,
+        [Parameter(Mandatory=$false)] 
+        [String] $LogPath = $DLPath
+    )
+    if(!(Test-Path -Path $DLPath)){$null = New-Item -ItemType directory -Path $DLPath}    
+    $DLLink = "https://go.microsoft.com/fwlink/?LinkID=799445"
+    $FileName = "Win10_UA.exe"
+    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$DLPath\$FileName")
+    Write-Host "The Upgrade will commence shortly. Your PC will be rebooted. Please save any work you do not want to lose."
+    Invoke-Expression "$DLPath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
+}
+
