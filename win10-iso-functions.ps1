@@ -2,10 +2,6 @@ function Get-Win10ISOLink {
     <#
     .SYNOPSIS
         This function generates a fresh download link for a Windows 10 ISO
-    .INPUTS
-        Prefered Architecture (Defaults to English language and Latest version).
-    .OUTPUTS
-        Windows 10 ISO download link    
     .NOTES
         Version:        1.6
         Author:         Andy Escolastico
@@ -108,9 +104,7 @@ function Get-Win10ISOLink {
 function Start-Win10FeatureUpdate {
     <#
     .SYNOPSIS
-        Installs an upgrade to Windows given an existing ISO file.
-    .INPUTS
-        Win10 ISO path and install log path
+        Downloads the latest Windows 10 ISO, mounts it, and runs it silently.
     .NOTES
         Version:        1.1
         Author:         Andy Escolastico
