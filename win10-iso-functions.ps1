@@ -152,8 +152,15 @@ function Install-Win10FeatureUpdate {
         [Parameter(Mandatory=$true)] 
         [String] $LogPath
     )
-    Write-Host "The Upgrade will commence shortly. Your PC will be rebooted soon. Please save any work you do not want to lose."
-    $DriveLetter = (Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter
+    
+    if (Test-Path $ISOPath) {
+        $DriveLetter = (Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter
+    } else {
+        throw "ISO could not be found under $($ISOPath)."
+    }
+    
+    Write-Warning "The Upgrade will commence shortly. Your PC will be rebooted soon. Please save any work you do not want to lose."
+    
     if ($DriveLetter) {
         Invoke-Expression "$($DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
     } else {
