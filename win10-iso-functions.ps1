@@ -130,6 +130,8 @@ function Receive-Win10ISO {
     Write-Verbose "The Windows 10 ISO will be downloaded to $DLPath" -Verbose
     (New-Object System.Net.WebClient).DownloadFile($DLLink, "$DLPath")
 }
+# Alias to previously-created functoin using unapproved verb.
+New-Alias -Name "Download-Win10ISO" -Value "Receive-Win10ISO" -ea 0
 
 function Install-Win10FeatureUpdate {
     <#
@@ -192,4 +194,6 @@ function Update-Windows10FeatureUpgrade {
     Write-Host "The Upgrade will commence shortly. Your PC will be rebooted. Please save any work you do not want to lose."
     Invoke-Expression "$DLPath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
 }
+# Alias to previously-created functoin using unapproved verb.
+New-Alias -Name "Upgrade-Windows" -Value "Update-Windows10FeatureUpgrade" -ea 0
 
