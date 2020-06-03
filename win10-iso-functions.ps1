@@ -1,9 +1,9 @@
 function Get-Win10ISOLink {
     <#
     .SYNOPSIS
-        This function generates a fresh download link for a windows 10 iso
+        This function generates a fresh download link for a Windows 10 ISO
     .INPUTS
-        Prefered Architecture 
+        Prefered Architecture (Defaults to English language and Latest version).
     .OUTPUTS
         Windows 10 ISO download link    
     .NOTES
@@ -127,22 +127,23 @@ function Download-Win10ISO {
         [String] $DLPath = (Get-Location).Path + "\" +"Win10_" + $Architecture + ".iso"
     )
     $DLLink = Get-Win10ISOLink -Architecture $Architecture
-    Write-Host "The Windows 10 ISO will be downloaded to $DLPath"
+    Write-Verbose "The Windows 10 ISO will be downloaded to $DLPath" -Verbose
     (New-Object System.Net.WebClient).DownloadFile($DLLink, $DLPath)
 }
 
 function Install-Win10FeatureUpdate {
     <#
     .SYNOPSIS
-        PLACEHOLDER
+        Installs an upgrade to Windows given an existing ISO file.
     .INPUTS
-        Win10 ISO path and install log path 
-    .OUTPUTS
-        Windows 10 ISO download link    
+        Win10 ISO path and install log path   
     .NOTES
-        Version:        1.0
+        Version:        1.1
         Author:         Andy Escolastico
         Creation Date:  02/11/2020
+        
+        Version 1.0 (2020-02-11)
+        Version 1.1 (2020-06-03) - Added handling for case where drive letter was not mounted.
     #>
     [CmdletBinding()]
     param (
@@ -152,5 +153,10 @@ function Install-Win10FeatureUpdate {
         [String] $LogPath
     )
     Write-Host "The Upgrade will commence shortly. Your PC will be rebooted soon. Please save any work you do not want to lose."
-    Invoke-Expression "$((Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
+    $DriveLetter = (Mount-DiskImage -ImagePath $ISOPath | Get-Volume).DriveLetter
+    if ($DriveLetter) {
+        Invoke-Expression "$($DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
+    } else {
+        throw "ISO could not be mounted on this system."
+    }
 }
