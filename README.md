@@ -3,7 +3,7 @@
 Get-Win10ISOLink:
 This function spoofs a request from a non windows device in order generate a windows 10 ISO link. It leverages MSFTs internal APIs and hardcoded IDs to generate the link.
 
-Download-Win10ISO:
+Receive-Win10ISO:
 This function generates a new ISO link and downloads it to your PC
 
 Install-Win10FeatureUpdate:
@@ -15,11 +15,11 @@ Example uses of the functions in this repo:
 # One step upgrade:
 CMD:
 ```
-"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Download-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'; Install-Win10FeatureUpdate -ISOPath 'C:\Windows\Temp\Windows10.iso' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'}"
+"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Receive-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'; Install-Win10FeatureUpdate -ISOPath 'C:\Windows\Temp\Windows10.iso' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'}"
 ```
 Powershell:
 ```
-(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Download-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'; Install-Win10FeatureUpdate -ISOPath 'C:\Windows\Temp\Windows10.iso' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'
+(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Receive-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'; Install-Win10FeatureUpdate -ISOPath 'C:\Windows\Temp\Windows10.iso' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'
 ```
 
 # GENERATE DL LINK:
@@ -34,11 +34,11 @@ PowerShell:
 # DOWNLOAD ISO:
 CMD:
 ```
-"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Download-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'}"
+"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Receive-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'}"
 ```
 PowerShell:
 ```
-(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Download-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'
+(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Receive-Win10ISO -DLPath 'C:\Windows\Temp\Windows10.iso'
 ```
 # INSTALL ISO
 CMD:
