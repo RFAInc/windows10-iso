@@ -215,8 +215,8 @@ function Start-Win10UpgradeCAB{
     $FilePath = "$DLPath\$FileName"
     (New-Object System.Net.WebClient).DownloadFile($DLLink, "$FilePath")
     if ($Reboot -eq $true){
-        Invoke-Expression "DISM.exe /Online /Add-Package /Silent /PackagePath:$FilePath /LogPath:$LogPath"
+        Invoke-Expression "DISM.exe /Online /Add-Package /Quiet /PackagePath:$FilePath /LogPath:$LogPath"
     } else{
-        Invoke-Expression "DISM.exe /Online /Add-Package /Silent /NoRestart /PackagePath:$FilePath /LogPath:$LogPath"
+        Invoke-Expression "DISM.exe /Online /Add-Package /Quiet /NoRestart /PackagePath:$FilePath /LogPath:$LogPath"
     }
 }
