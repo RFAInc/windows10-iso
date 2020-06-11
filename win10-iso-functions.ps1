@@ -159,7 +159,7 @@ function Start-Win10FeatureUpdate {
 
 }
 
-function Start-Win10Upgrade {
+function Start-Win10UpgradeWUA {
     <#
     .SYNOPSIS
         This function downloads the Windows update assistant tool and runs it silently.
