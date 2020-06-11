@@ -178,33 +178,34 @@ function Start-Win10Upgrade {
     if(!(Test-Path -Path $DLPath)){$null = New-Item -ItemType directory -Path $DLPath}    
     $DLLink = "https://go.microsoft.com/fwlink/?LinkID=799445"
     $FileName = "Win10_UA.exe"
-    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$DLPath\$FileName")
+    $FilePath = "$DLPath\$FileName"
+    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$FilePath")
     Write-Host "The Upgrade will commence shortly. Your PC will be rebooted. Please save any work you do not want to lose."
-    Invoke-Expression "$DLPath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
-}
-function Install-WinCAB{
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)]
-        [String] $Link,
-        [Parameter(Mandatory=$false)]
-        [String] $Path = (Get-Location).Path
-    )
-    $KB = ($Link | Select-String -Pattern 'kb(\d+)').Matches.Value
-    $FileName = "$KB-patch.cab"
-    $CabFilePath = "$Path\$FileName"
-    (New-Object System.Net.WebClient).DownloadFile($Link, $CabFilePath)
-    Invoke-Expression "DISM.exe /Online /Add-Package /Silent /PackagePath:$CabFilePath"
+    Invoke-Expression "$FilePath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
 }
 function Start-Win10UpgradeCAB{
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$false)] 
         [ValidateSet("1909")]
-        [String] $Version = "1909"
+        [String] $Version = "1909",
+        [Parameter(Mandatory=$false)] 
+        [Boolean] $Reboot = $true,
+        [Parameter(Mandatory=$false)]
+        [String] $DLPath = (Get-Location).Path,
+        [Parameter(Mandatory=$false)] 
+        [String] $LogPath = $DLPath
     )
+    if(!(Test-Path -Path $DLPath)){$null = New-Item -ItemType directory -Path $DLPath}    
     if($Version -eq "1909"){
-        $Link = 'http://b1.download.windowsupdate.com/d/upgr/2019/11/windows10.0-kb4517245-x64_4250e1db7bc9468236c967c2c15f04b755b3d3a9.cab'
+        $DLLink = 'http://b1.download.windowsupdate.com/d/upgr/2019/11/windows10.0-kb4517245-x64_4250e1db7bc9468236c967c2c15f04b755b3d3a9.cab'
     }
-    Install-WinCAB -Link $Link
+    $FileName = "Win10_CAB.cab"
+    $FilePath = "$DLPath\$FileName"
+    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$FilePath")
+    if ($Reboot -eq $true){
+        Invoke-Expression "DISM.exe /Online /Add-Package /Silent /PackagePath:$FilePath /LogPath:$LogPath"
+    } else{
+        Invoke-Expression "DISM.exe /Online /Add-Package /NoReboot /PackagePath:$FilePath /LogPath:$LogPath"
+    }
 }
