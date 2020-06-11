@@ -175,7 +175,8 @@ function Start-Win10UpgradeWUA {
         [Parameter(Mandatory=$false)] 
         [String] $LogPath = $DLPath
     )
-    if(!(Test-Path -Path $DLPath)){$null = New-Item -ItemType directory -Path $DLPath}    
+    if(!(Test-Path -Path $DLPath)){$null = New-Item -ItemType directory -Path $DLPath -Force}   
+    if(!(Test-Path -Path $LogPath)){$null = New-Item -ItemType directory -Path $DLPath -Force}      
     $DLLink = "https://go.microsoft.com/fwlink/?LinkID=799445"
     $FileName = "Win10_UA.exe"
     $FilePath = "$DLPath\$FileName"
@@ -205,7 +206,8 @@ function Start-Win10UpgradeCAB{
         [Parameter(Mandatory=$false)] 
         [String] $LogPath = $DLPath
     )
-    if(!(Test-Path -Path $DLPath)){$null = New-Item -ItemType directory -Path $DLPath}    
+    if(!(Test-Path -Path $DLPath)){$null = New-Item -ItemType directory -Path $DLPath -Force}   
+    if(!(Test-Path -Path $LogPath)){$null = New-Item -ItemType directory -Path $DLPath -Force}    
     if($Version -eq "1909"){
         $DLLink = 'http://b1.download.windowsupdate.com/d/upgr/2019/11/windows10.0-kb4517245-x64_4250e1db7bc9468236c967c2c15f04b755b3d3a9.cab'
     }
