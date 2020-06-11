@@ -217,6 +217,6 @@ function Start-Win10UpgradeCAB{
     if ($Reboot -eq $true){
         Invoke-Expression "DISM.exe /Online /Add-Package /Silent /PackagePath:$FilePath /LogPath:$LogPath"
     } else{
-        Invoke-Expression "DISM.exe /Online /Add-Package /Silent /NoReboot /PackagePath:$FilePath /LogPath:$LogPath"
+        Invoke-Expression "DISM.exe /Online /Add-Package /Silent /NoRestart /PackagePath:$FilePath /LogPath:$LogPath"
     }
 }
