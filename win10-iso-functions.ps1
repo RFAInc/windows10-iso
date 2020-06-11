@@ -185,6 +185,14 @@ function Start-Win10UpgradeWUA {
 }
 
 function Start-Win10UpgradeCAB{
+    <#
+    .SYNOPSIS
+        This function downloads the feature enablement package cab file and runs it silently using dism.exe.
+    .NOTES
+        Version:        1.0
+        Author:         Andy Escolastico
+        Creation Date:  06/11/2020
+    #>
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$false)] 
