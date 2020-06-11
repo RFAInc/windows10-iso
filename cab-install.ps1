@@ -10,6 +10,6 @@ function Install-WindowsCAB{
     $FileName = "$kb-patch.cab"
     $CabFilePath = "$Path\$FileName"
     (New-Object System.Net.WebClient).DownloadFile($Link, $CabFilePath)
-    Start-Process "DISM.exe /Online /Add-Package /PackagePath:$CabFilePath"
+    Invoke-Expression "DISM.exe /Online /Add-Package /PackagePath:$CabFilePath"
 }
 Install-WindowsCAB -Link 'http://b1.download.windowsupdate.com/d/upgr/2019/11/windows10.0-kb4517245-x64_4250e1db7bc9468236c967c2c15f04b755b3d3a9.cab'
