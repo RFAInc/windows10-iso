@@ -24,8 +24,7 @@ Powershell:
 # One step upgrade using WUA tool (untested)
 CMD:
 ```
-"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Start-Win10UpgradeWUA -DLPath 'C:\Windows\Temp' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'
-}"
+"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Start-Win10UpgradeWUA -DLPath 'C:\Windows\Temp' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'}"
 ```
 Powershell:
 ```
