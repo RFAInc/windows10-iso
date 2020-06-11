@@ -183,6 +183,7 @@ function Start-Win10Upgrade {
     Write-Host "The Upgrade will commence shortly. Your PC will be rebooted. Please save any work you do not want to lose."
     Invoke-Expression "$FilePath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
 }
+
 function Start-Win10UpgradeCAB{
     [CmdletBinding()]
     param (
