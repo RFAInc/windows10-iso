@@ -1,14 +1,5 @@
 # Windows 10 ISO Powershell Functions
 
-Get-Win10ISOLink:
-This function spoofs a request from a non windows device in order generate a windows 10 ISO link. It leverages MSFTs internal APIs and hardcoded IDs to generate the link.
-
-Receive-Win10ISO:
-This function generates a new ISO link and downloads it to your PC
-
-Start-Win10FeatureUpdate:
-This function generates a new ISO link, downloads it, and then attempts to upgrade the OS to the version of said ISO. 
-
 Example uses of the functions in this repo:
 
 
