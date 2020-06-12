@@ -24,20 +24,20 @@ Powershell:
 # One step upgrade using WUA tool (untested):
 CMD:
 ```
-"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Start-Win10UpgradeWUA -DLPath 'C:\Windows\Temp' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'}"
+"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Start-Win10UpgradeWUA -DLPath 'C:\Windows\Temp' -LogPath 'C:\Windows\Temp'}"
 ```
 Powershell:
 ```
-(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Start-Win10UpgradeWUA -DLPath 'C:\Windows\Temp' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'
+(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Start-Win10UpgradeWUA -DLPath 'C:\Windows\Temp' -LogPath 'C:\Windows\Temp'
 ```
 # One step upgrade using CAB file (untested):
 CMD:
 ```
-"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Start-Win10UpgradeCAB -Reboot $false -DLPath 'C:\Windows\Temp' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'}"
+"%windir%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "& {(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Start-Win10UpgradeCAB -Reboot $false -DLPath 'C:\Windows\Temp' -LogPath 'C:\Windows\Temp'}"
 ```
 Powershell:
 ```
-(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Start-Win10UpgradeCAB -Reboot $false -DLPath 'C:\Windows\Temp' -LogPath 'C:\Windows\Temp\WindowsUpgradeLogs'
+(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/RFAInc/windows10-iso/master/win10-iso-functions.ps1') | Invoke-Expression; Start-Win10UpgradeCAB -Reboot $false -DLPath 'C:\Windows\Temp' -LogPath 'C:\Windows\Temp'
 ```
 # Generate an ISO DL Link:
 CMD:
