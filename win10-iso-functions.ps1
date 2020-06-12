@@ -173,16 +173,16 @@ function Start-Win10UpgradeWUA {
         [Parameter(Mandatory=$false)] 
         [String] $DLPath = (Get-Location).Path,
         [Parameter(Mandatory=$false)] 
-        [String] $LogPath = $DLPath
+        [String] $LogPath = (Get-Location).Path
     )
     if(!(Test-Path -Path $DLPath)){$null = New-Item -ItemType directory -Path $DLPath -Force}   
-    if(!(Test-Path -Path $LogPath)){$null = New-Item -ItemType directory -Path $DLPath -Force}      
+    if(!(Test-Path -Path $LogPath)){$null = New-Item -ItemType directory -Path $LogPath -Force}      
     $DLLink = "https://go.microsoft.com/fwlink/?LinkID=799445"
-    $FileName = "Win10_UA.exe"
-    $FilePath = "$DLPath\$FileName"
-    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$FilePath")
+    $PackagePath = "$DLPath\Win10_WUA.exe"
+    $LogPath = "$LogPath\Win10_WUA.log"
+    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$PackagePath")
     Write-Host "The Upgrade will commence shortly. Your PC will be rebooted. Please save any work you do not want to lose."
-    Invoke-Expression "$FilePath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
+    Invoke-Expression "$PackagePath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
 }
 
 function Start-Win10UpgradeCAB{
@@ -204,19 +204,19 @@ function Start-Win10UpgradeCAB{
         [Parameter(Mandatory=$false)]
         [String] $DLPath = (Get-Location).Path,
         [Parameter(Mandatory=$false)] 
-        [String] $LogPath = $DLPath
+        [String] $LogPath = (Get-Location).Path
     )
     if(!(Test-Path -Path $DLPath)){$null = New-Item -ItemType directory -Path $DLPath -Force}   
-    if(!(Test-Path -Path $LogPath)){$null = New-Item -ItemType directory -Path $DLPath -Force}    
+    if(!(Test-Path -Path $LogPath)){$null = New-Item -ItemType directory -Path $LogPath -Force}    
     if($Version -eq "1909"){
         $DLLink = 'http://b1.download.windowsupdate.com/d/upgr/2019/11/windows10.0-kb4517245-x64_4250e1db7bc9468236c967c2c15f04b755b3d3a9.cab'
     }
-    $FileName = "Win10_CAB.cab"
-    $FilePath = "$DLPath\$FileName"
-    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$FilePath")
+    $PackagePath = "$DLPath\Win10_CAB.cab"
+    $LogPath = "$LogPath\Win10_CAB.log"
+    (New-Object System.Net.WebClient).DownloadFile($DLLink, "$PackagePath")
     if ($Reboot -eq $true){
-        Invoke-Expression "DISM.exe /Online /Add-Package /Quiet /PackagePath:$FilePath /LogPath:$LogPath"
+        Invoke-Expression "DISM.exe /Online /Add-Package /Quiet /PackagePath:$PackagePath /LogPath:$LogPath"
     } else{
-        Invoke-Expression "DISM.exe /Online /Add-Package /Quiet /NoRestart /PackagePath:$FilePath /LogPath:$LogPath"
+        Invoke-Expression "DISM.exe /Online /Add-Package /Quiet /NoRestart /PackagePath:$PackagePath /LogPath:$LogPath"
     }
 }
