@@ -187,7 +187,7 @@ function Start-Win10UpgradeWUA {
     if ($Reboot -eq $true){
         Invoke-Expression "$PackagePath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
     } else{
-        Invoke-Expression "$PackagePath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall /NoReboot"
+        Invoke-Expression "$PackagePath /NoReboot /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
     }
 }
 
