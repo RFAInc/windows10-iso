@@ -171,6 +171,8 @@ function Start-Win10UpgradeWUA {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$false)] 
+        [Boolean] $Reboot = $true,
+        [Parameter(Mandatory=$false)] 
         [String] $DLPath = (Get-Location).Path,
         [Parameter(Mandatory=$false)] 
         [String] $LogPath = (Get-Location).Path
@@ -182,7 +184,11 @@ function Start-Win10UpgradeWUA {
     $LogPath = "$LogPath\Win10_WUA.log"
     (New-Object System.Net.WebClient).DownloadFile($DLLink, "$PackagePath")
     Write-Host "The Upgrade will commence shortly. Your PC will be rebooted. Please save any work you do not want to lose."
-    Invoke-Expression "$PackagePath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
+    if ($Reboot -eq $true){
+        Invoke-Expression "$PackagePath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
+    } else{
+        Invoke-Expression "$PackagePath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall /NoReboot"
+    }
 }
 
 function Start-Win10UpgradeCAB{
