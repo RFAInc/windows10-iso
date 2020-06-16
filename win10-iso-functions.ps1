@@ -101,7 +101,7 @@ function Get-Win10ISOLink {
     Write-Output $dlLink
 }
 
-function Start-Win10FeatureUpdate {
+function Start-Win10UpgradeISO {
     <#
     .SYNOPSIS
         Downloads the latest Windows 10 ISO, mounts it, and runs it silently.
@@ -116,6 +116,8 @@ function Start-Win10FeatureUpdate {
     #>
     [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$false)] 
+        [Boolean] $Reboot = $true,
         [Parameter(Mandatory=$false)] 
         [ValidateSet("64-bit", "32-bit")]
         [String] $Architecture = (Get-WmiObject Win32_OperatingSystem).OSArchitecture,
@@ -152,12 +154,17 @@ function Start-Win10FeatureUpdate {
     Write-Warning "The Upgrade will commence shortly. Your PC will be rebooted soon. Please save any work you do not want to lose."
     
     if ($DriveLetter) {
-        Invoke-Expression "$($DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
+        if ($Reboot -eq $true){
+            Invoke-Expression "$($DriveLetter):\setup.exe /auto Upgrade /quiet /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
+        } else{
+            Invoke-Expression "$($DriveLetter):\setup.exe /auto Upgrade /quiet /NoReboot /NoRestartUI /NoRestart /Compat IgnoreWarning /DynamicUpdate disable /copylogs $LogPath"
+        }    
     } else {
         throw "ISO could not be mounted on this system."
     }
 
 }
+New-Alias -Name "Start-Win10FeatureUpdate" -Value "Start-Win10UpgradeISO" -ea 0
 
 function Start-Win10UpgradeWUA {
     <#
@@ -187,7 +194,7 @@ function Start-Win10UpgradeWUA {
     if ($Reboot -eq $true){
         Invoke-Expression "$PackagePath /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
     } else{
-        Invoke-Expression "$PackagePath /NoReboot /NoRestartUI /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
+        Invoke-Expression "$PackagePath /NoReboot /NoRestartUI /NoRestart /copylogs $LogPath /auto upgrade /dynamicupdate /compat ignorewarning enable /skipeula /quietinstall"
     }
 }
 
