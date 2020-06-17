@@ -116,6 +116,7 @@ function Start-Win10UpgradeISO {
     #>
     [CmdletBinding()]
     param (
+        #THIS FLAG DOES NOT WORK FOR THIS FUNCTION
         [Parameter(Mandatory=$false)] 
         [Boolean] $Reboot = $true,
         [Parameter(Mandatory=$false)] 
@@ -179,6 +180,7 @@ function Start-Win10UpgradeWUA {
     param (
         [Parameter(Mandatory=$false)] 
         [Boolean] $Reboot = $true,
+        #THIS FLAG DOES NOT WORK FOR THIS FUNCTION
         [Parameter(Mandatory=$false)] 
         [String] $DLPath = (Get-Location).Path,
         [Parameter(Mandatory=$false)] 
