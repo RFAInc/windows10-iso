@@ -27,7 +27,7 @@ function Get-Win10ISOLink {
     if ($Architecture -eq "64-bit"){ $archID = "x64" } else { $archID = "x32" }
     
     # prefered prodID
-    if ($Version = "Latest") {
+    if ($Version -eq "Latest") {
         # grabs latest id
         $response = Invoke-WebRequest -UserAgent $userAgent -WebSession $session -Uri "https://www.microsoft.com/$Locale/software-download/windows10ISO" -UseBasicParsing
         $prodID = ([regex]::Match((($response).RawContent), 'product-info-content.*option value="(.*)">Windows 10')).captures.groups[1].value
