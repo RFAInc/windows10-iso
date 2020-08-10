@@ -116,9 +116,8 @@ function Start-Win10UpgradeISO {
     #>
     [CmdletBinding()]
     param (
-        #THIS FLAG DOES NOT WORK FOR THIS FUNCTION
         [Parameter(Mandatory=$false)] 
-        [Boolean] $Reboot = $true,
+        [Boolean] $Reboot = $true, #THIS FLAG DOES NOT WORK FOR THIS FUNCTION#
         [Parameter(Mandatory=$false)] 
         [ValidateSet("64-bit", "32-bit")]
         [String] $Architecture = (Get-WmiObject Win32_OperatingSystem).OSArchitecture,
@@ -179,8 +178,7 @@ function Start-Win10UpgradeWUA {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$false)] 
-        [Boolean] $Reboot = $true,
-        #THIS FLAG DOES NOT WORK FOR THIS FUNCTION
+        [Boolean] $Reboot = $true, #THIS FLAG DOES NOT WORK FOR THIS FUNCTION#
         [Parameter(Mandatory=$false)] 
         [String] $DLPath = (Get-Location).Path,
         [Parameter(Mandatory=$false)] 
