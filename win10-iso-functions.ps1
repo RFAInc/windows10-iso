@@ -233,3 +233,93 @@ function Start-Win10UpgradeCAB{
         Invoke-Expression "DISM.exe /Online /Add-Package /Quiet /NoRestart /PackagePath:$PackagePath /LogPath:$LogPath"
     }
 }
+
+function Get-WebRequestTable {
+    <#
+    .SYNOPSIS
+    Attempts to scrape table from webpage.
+    .DESCRIPTION
+    Scrapes a given numbered table for the provided Web 
+    Request response from the Invoke-WebRequest cmdlet.
+    .PARAMETER WebRequest
+    HtmlWebResponseObject returned from Invoke-WebRequest cmdlet. 
+    .PARAMETER TableNumber
+    Index number of the table on the page, in order. First table is default.
+    .EXAMPLE
+    $r = Invoke-WebRequest $url
+    Get-WebRequestTable $r -TableNumber 0 | Format-Table -Auto
+
+    P1              P2         P3                   P4
+    --              --         --                   --
+    Gardiner Number Hieroglyph Description of Glyph Details
+    Q1                         Seat                 Phono. st, ws, . In st ?seat, place,? wsir ?Osiris,? ?tm ?perish.?
+    Q2                         Portable seat        Phono. ws. In wsir ?Osiris.?
+    Q3                         Stool                Phono. p.
+    Q4                         Headrest             Det. in wrs ?headrest.?
+    Q5                         Chest                Det. in hn ?box,? ?fdt ?chest.?
+    Q6                         Coffin               Det. or Ideo. in qrs ?bury,? krsw ?coffin.?
+    Q7                         Brazier with flame   Det. of fire. In ?t ?fire,? s?t ?flame,? srf ?temperature.?
+    .NOTES
+    From https://www.leeholmes.com/blog/2015/01/05/extracting-tables-from-powershells-invoke-webrequest/
+    #>
+    param(
+        [Parameter(Position=0,Mandatory = $true)]
+        [Microsoft.PowerShell.Commands.HtmlWebResponseObject]
+        $WebRequest,
+
+        [Parameter()]
+        [int]
+        $TableNumber = 0
+    )
+
+    ## Extract the tables out of the web request
+    $tables = @($WebRequest.ParsedHtml.getElementsByTagName("TABLE"))
+    $table = $tables[$TableNumber]
+    $titles = @()
+    $rows = @($table.Rows)
+
+    ## Go through all of the rows in the table
+    foreach($row in $rows) {
+        $cells = @($row.Cells)
+        ## If we've found a table header, remember its titles
+        if($cells[0].tagName -eq "TH") {
+            $titles = @($cells | % { ("" + $_.InnerText).Trim() })
+            continue
+        }
+
+        ## If we haven't found any table headers, make up names "P1", "P2", etc.
+        if(-not $titles) {
+            $titles = @(1..($cells.Count + 2) | % { "P$_" })
+        }
+
+        ## Now go through the cells in the the row. For each, try to find the
+        ## title that represents that column and create a hashtable mapping those
+        ## titles to content
+        $resultObject = [Ordered] @{}
+        for($counter = 0; $counter -lt $cells.Count; $counter++) {
+            $title = $titles[$counter]
+            if(-not $title) { continue }
+            $resultObject[$title] = ("" + $cells[$counter].InnerText).Trim()
+        }
+
+        ## And finally cast that hashtable to a PSCustomObject
+        [PSCustomObject] $resultObject
+    }
+}#END: function Get-WebRequestTable
+
+function Get-Win10ReleaseInfo {
+    [CmdletBinding()]
+    param ()
+
+    # URL for the Win10 online chart we will scrape
+    $Uri = 'https://docs.microsoft.com/en-us/windows/release-information/'
+    
+    # Get Web Request
+    $WebRequest = Invoke-WebRequest -Uri $Uri
+    $Table = Get-WebRequestTable $WebRequest -TableNumber 0
+
+
+
+    Write-Output $Table
+
+}#END: function Get-Win10ReleaseInfo
