@@ -319,7 +319,6 @@ function Get-Win10ReleaseInfo {
     $WebRequest = Invoke-WebRequest -Uri $Uri
     $html = new-object -ComObject "HTMLFile"
     $html.IHTMLDocument2_write($WebRequest.RawContent)
-    #$table = $html.getElementById("historyTable_10")  
     $tables = $html.getElementsByTagName('table')
 
     $OutputObject = New-Object -TypeName System.Collections.ArrayList
@@ -327,6 +326,8 @@ function Get-Win10ReleaseInfo {
 
         $thisTable = New-Object -TypeName System.Collections.ArrayList
         $rows = @($table.Rows)
+        $titles = @()
+
         ## Go through all of the rows in the table
         foreach($row in $rows) {
             $cells = @($row.Cells)
@@ -351,14 +352,51 @@ function Get-Win10ReleaseInfo {
                 $resultObject[$title] = ("" + $cells[$counter].InnerText).Trim()
             }
         
+            # Convert dates in 2 columns to datetime objects
+            foreach ($record in $resultObject) {
+
+                $record.'Availability date' = $record.'Availability date' -as [datetime]
+                $record.'Latest revision date' = $record.'Latest revision date' -as [datetime]
+
+            }#END: foreach ($record in $Table)
+
             ## And finally cast that hashtable to a PSCustomObject
             [void]$thisTable.Add(([PSCustomObject] $resultObject))
+
         }#END: foreach($row in $rows)
 
-        [void]$OutputObject.Add(($thisTable))
+        # We don't care about tables that do not include an expired date
+        #  these are historical info only
+        # If this table has more than 1 *date* column title, keep it
+        $PertinentTable = $false
+        $titles | Where-Object {$_ -ne 'Availability date'} |
+            Foreach-Object {
+                if ($_ -like '*date*') {
+                    $PertinentTable = $true
+                }
+            }
+
+        # Add only pertanent tables to the result
+        if ($PertinentTable) {
+
+            # The name of the table can be the servicing option.
+            #  if multiple, use shortest string only
+            $TableName = $thisTable.'Servicing option' |
+                Where-Object {$_ -like '*channel*'} |
+                Select-Object -Unique |
+                ForEach-Object {$_ -replace '\s\(.*$'} |
+                Select-Object -First 1
+                
+            $thisRecord = [PSCustomObject]@{
+                Name = $TableName
+                Table = $thisTable
+            }
+            [void]$OutputObject.Add(($thisRecord))
+
+        }
 
     }#END: foreach ($table in $tables)
 
-    $OutputObject
-    
+    Write-Output $OutputObject
+
 }#END: function Get-Win10ReleaseInfo
