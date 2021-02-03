@@ -233,3 +233,170 @@ function Start-Win10UpgradeCAB{
         Invoke-Expression "DISM.exe /Online /Add-Package /Quiet /NoRestart /PackagePath:$PackagePath /LogPath:$LogPath"
     }
 }
+
+function Get-WebRequestTable {
+    <#
+    .SYNOPSIS
+    Attempts to scrape table from webpage.
+    .DESCRIPTION
+    Scrapes a given numbered table for the provided Web 
+    Request response from the Invoke-WebRequest cmdlet.
+    .PARAMETER WebRequest
+    HtmlWebResponseObject returned from Invoke-WebRequest cmdlet. 
+    .PARAMETER TableNumber
+    Index number of the table on the page, in order. First table is default.
+    .EXAMPLE
+    $r = Invoke-WebRequest $url
+    Get-WebRequestTable $r -TableNumber 0 | Format-Table -Auto
+
+    P1              P2         P3                   P4
+    --              --         --                   --
+    Gardiner Number Hieroglyph Description of Glyph Details
+    Q1                         Seat                 Phono. st, ws, . In st ?seat, place,? wsir ?Osiris,? ?tm ?perish.?
+    Q2                         Portable seat        Phono. ws. In wsir ?Osiris.?
+    Q3                         Stool                Phono. p.
+    Q4                         Headrest             Det. in wrs ?headrest.?
+    Q5                         Chest                Det. in hn ?box,? ?fdt ?chest.?
+    Q6                         Coffin               Det. or Ideo. in qrs ?bury,? krsw ?coffin.?
+    Q7                         Brazier with flame   Det. of fire. In ?t ?fire,? s?t ?flame,? srf ?temperature.?
+    .NOTES
+    From https://www.leeholmes.com/blog/2015/01/05/extracting-tables-from-powershells-invoke-webrequest/
+    #>
+    param(
+        [Parameter(Position=0,Mandatory = $true)]
+        [Microsoft.PowerShell.Commands.HtmlWebResponseObject]
+        $WebRequest,
+
+        [Parameter()]
+        [int]
+        $TableNumber = 0
+    )
+
+    ## Extract the tables out of the web request
+    $tables = @($WebRequest.ParsedHtml.getElementsByTagName("TABLE"))
+    $table = $tables[$TableNumber]
+    $titles = @()
+    $rows = @($table.Rows)
+
+    ## Go through all of the rows in the table
+    foreach($row in $rows) {
+        $cells = @($row.Cells)
+        ## If we've found a table header, remember its titles
+        if($cells[0].tagName -eq "TH") {
+            $titles = @($cells | % { ("" + $_.InnerText).Trim() })
+            continue
+        }
+
+        ## If we haven't found any table headers, make up names "P1", "P2", etc.
+        if(-not $titles) {
+            $titles = @(1..($cells.Count + 2) | % { "P$_" })
+        }
+
+        ## Now go through the cells in the the row. For each, try to find the
+        ## title that represents that column and create a hashtable mapping those
+        ## titles to content
+        $resultObject = [Ordered] @{}
+        for($counter = 0; $counter -lt $cells.Count; $counter++) {
+            $title = $titles[$counter]
+            if(-not $title) { continue }
+            $resultObject[$title] = ("" + $cells[$counter].InnerText).Trim()
+        }
+
+        ## And finally cast that hashtable to a PSCustomObject
+        [PSCustomObject] $resultObject
+    }
+}#END: function Get-WebRequestTable
+
+function Get-Win10ReleaseInfo {
+    [CmdletBinding()]
+    param ()
+
+    # URL for the Win10 online chart we will scrape
+    #$Uri = 'https://docs.microsoft.com/en-us/windows/release-information/' # just jscript
+    $Uri = 'https://winreleaseinfoprod.blob.core.windows.net/winreleaseinfoprod/en-US.html'
+    
+    # Get Web Request
+    $WebRequest = Invoke-WebRequest -Uri $Uri
+    $html = new-object -ComObject "HTMLFile"
+    $html.IHTMLDocument2_write($WebRequest.RawContent)
+    $tables = $html.getElementsByTagName('table')
+
+    $OutputObject = New-Object -TypeName System.Collections.ArrayList
+    foreach ($table in $tables) {
+
+        $thisTable = New-Object -TypeName System.Collections.ArrayList
+        $rows = @($table.Rows)
+        $titles = @()
+
+        ## Go through all of the rows in the table
+        foreach($row in $rows) {
+            $cells = @($row.Cells)
+            ## If we've found a table header, remember its titles
+            if($cells[0].tagName -eq "TH") {
+                $titles = @($cells | % { ("" + $_.InnerText).Trim() })
+                continue
+            }
+        
+            ## If we haven't found any table headers, make up names "P1", "P2", etc.
+            if(-not $titles) {
+                $titles = @(1..($cells.Count + 2) | % { "P$_" })
+            }
+        
+            ## Now go through the cells in the the row. For each, try to find the
+            ## title that represents that column and create a hashtable mapping those
+            ## titles to content
+            $resultObject = [Ordered] @{}
+            for($counter = 0; $counter -lt $cells.Count; $counter++) {
+                $title = $titles[$counter]
+                if(-not $title) { continue }
+                $resultObject[$title] = ("" + $cells[$counter].InnerText).Trim()
+            }
+        
+            # Convert dates in 2 columns to datetime objects
+            foreach ($record in $resultObject) {
+
+                $record.'Availability date' = $record.'Availability date' -as [datetime]
+                $record.'Latest revision date' = $record.'Latest revision date' -as [datetime]
+
+            }#END: foreach ($record in $Table)
+
+            ## And finally cast that hashtable to a PSCustomObject
+            [void]$thisTable.Add(([PSCustomObject] $resultObject))
+
+        }#END: foreach($row in $rows)
+
+        # We don't care about tables that do not include an expired date
+        #  these are historical info only
+        # If this table has more than 1 *date* column title, keep it
+        $PertinentTable = $false
+        $titles | Where-Object {$_ -ne 'Availability date'} |
+            Foreach-Object {
+                if ($_ -like '*date*') {
+                    $PertinentTable = $true
+                }
+            }
+
+        # Add only pertanent tables to the result
+        if ($PertinentTable) {
+
+            # The name of the table can be the servicing option.
+            #  if multiple, use shortest string only
+            $TableName = $thisTable.'Servicing option' |
+                Where-Object {$_ -like '*channel*'} |
+                Select-Object -Unique |
+                ForEach-Object {$_ -replace '\s\(.*$'} |
+                Select-Object -First 1
+                
+            $thisRecord = [PSCustomObject]@{
+                Name = $TableName
+                Table = $thisTable
+            }
+            [void]$OutputObject.Add(($thisRecord))
+
+        }
+
+    }#END: foreach ($table in $tables)
+
+    Write-Output $OutputObject
+
+}#END: function Get-Win10ReleaseInfo
